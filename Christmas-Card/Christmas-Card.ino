@@ -456,11 +456,11 @@ void theaterChase(uint32_t c, uint8_t wait) {
 
 // lock ----------
 void lock() {
-  myservo.write(20);
+  myservo.write(90);
 }
 
 void unlock() {
-  myservo.write(90);
+  myservo.write(20);
 }
 
 
