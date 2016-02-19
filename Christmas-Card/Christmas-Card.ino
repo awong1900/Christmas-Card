@@ -56,6 +56,7 @@ NfcAdapter nfc = NfcAdapter(pn532_i2c);
 // example for more information on possible values.
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
+#define BUZZER 22
 
 #define MAX_BMP         12                      // bmp file num
 #define FILENAME_LEN    20                      // max file name length
@@ -72,6 +73,7 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ80
 #define CAPRICORN   0x3130
 #define AQUARIUS    0x3131
 #define PISCES      0x3132
+#define NEO         0x3133
 
 #define STATE_INIT 0x01
 #define STATE_CHECK 0x02
@@ -160,6 +162,11 @@ void loop()
 
           int code = (payload[len-2] << 8) + payload[len-1];
           Serial.println(code, HEX);
+          /* Super Neo come on, direct open door
+          **/
+          if (code == NEO) {
+            state = STATE_OPEN;
+          }
           check_constellation(code);
       }
   }
@@ -334,6 +341,7 @@ uint32_t read32(File f)
 
 // NFC  Tag check
 void check_constellation(int code) {
+    buzzer();
     switch (code) {
       case ARIES:
         blank_led(0);
@@ -463,6 +471,10 @@ void unlock() {
   myservo.write(20);
 }
 
+// Buzzer -------
+void buzzer() {
+   tone(BUZZER, 4000, 50);
+}
 
 // constellation state
 void constellation_init() {
@@ -487,7 +499,7 @@ void set_constellation(int index) {
 }
 
 
-// state swithc
+// state switch
 void state_switch(int _state) {
   Serial.print("State: 0x0");Serial.println(state);
   switch (_state) {
